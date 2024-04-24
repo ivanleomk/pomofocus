@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 export type IntervalType = "Work" | "Break";
 
-export const useTimer = (initialState = 25 * 60) => {
+export const useTimer = (initialState = 25*60) => {
   const [secondsLeft, setSecondsLeft] = useState(initialState);
   const [isActive, setIsActive] = useState(false);
   const [intervalType, setIntervalType] = useState<IntervalType>("Work"); // 'Work' or 'Break'
@@ -23,7 +23,6 @@ export const useTimer = (initialState = 25 * 60) => {
         setSecondsLeft((seconds) => {
           if (seconds === 1) {
             setIsActive(false);
-            return intervalType === "Work" ? 5 * 60 : 25 * 60;
           }
           return seconds - 1;
         });
