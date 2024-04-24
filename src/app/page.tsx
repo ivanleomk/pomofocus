@@ -1,13 +1,25 @@
+import PomodoroLog from "@/components/PomodoroSessions";
 import PomodoroTimer from "@/components/timer";
-import { Button } from "@/components/ui/button";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 export default function Home() {
   return (
-    <div className="mx-auto max-w-md mt-20">
-      <div>
-        <h1>Focus</h1>
-        <PomodoroTimer />
-      </div>
+    <div className="flex justify-center items-center h-full w-4/5 max-w-6xl mx-auto">
+      <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel>
+          <div className="flex justify-center items-center h-full">
+            <PomodoroTimer />
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel className="mx-10">
+          <PomodoroLog />
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }
