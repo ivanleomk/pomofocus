@@ -1,11 +1,13 @@
+import PomodoroTimer from "@/components/timer";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 export default function Home() {
   return (
-    <div>
-      <h1>This is a title</h1>
-      <Button>Click me</Button>
+    <div className="mx-auto max-w-md mt-20">
+      <div>
+        <h1>Focus</h1>
+        <PomodoroTimer />
+      </div>
     </div>
   );
 }
