@@ -1,5 +1,5 @@
 "use client";
-import { Edit2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import {
@@ -11,9 +11,6 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Input } from "./ui/input";
-import { useLocalStorage } from "./hooks/useLocalStorage";
-import { useSessions } from "./hooks/useSessions";
-import { z } from "zod";
 import { useSessionContext } from "./context/SessionContext";
 
 function PomodoroLog() {
@@ -21,13 +18,13 @@ function PomodoroLog() {
   const { sessions, deleteSession } = useSessionContext();
 
   const filteredSessions =
-    sessions.filter((session) =>
+    sessions?.filter((session) =>
       session.description.toLowerCase().includes(filter.toLowerCase())
     ) ?? [];
   return (
     <div className="h-[90vh]">
-      <div className="sticky top-10">
-        <div className="mb-4">
+      <div className="sticky">
+        <div className="py-4">
           <Input
             placeholder="Search sessions..."
             value={filter}
@@ -36,24 +33,26 @@ function PomodoroLog() {
           />
         </div>
       </div>
-      <div className="py-10" />
-      <div className="h-[calc(90vh-4rem)] overflow-y-auto">
+
+      <div className="flex flex-col space-y-4 overflow-y-scroll h-full">
         {filteredSessions
           .sort(
-            (a, b) =>
-              new Date(a.completedAt).getTime() -
-              new Date(b.completedAt).getTime()
+            (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()
           )
           .map((session) => (
-            <Card key={session.id} className="mb-4">
+            <Card key={session.id}>
               <CardHeader>
-                <CardTitle>Session {session.id}</CardTitle>
+                <CardTitle>
+                  {session.title.length > 0
+                    ? session.title
+                    : `Session ${session.id}`}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>{session.description}</CardDescription>
                 <p className="text-sm mt-2">
                   Completed on:{" "}
-                  {new Date(session.completedAt).toLocaleString("en-GB", {
+                  {new Date(session.end).toLocaleString("en-GB", {
                     hour: "2-digit",
                     minute: "2-digit",
                     day: "2-digit",
@@ -63,9 +62,6 @@ function PomodoroLog() {
                 </p>
               </CardContent>
               <CardFooter>
-                {/* <Button className="mr-2">
-                  <Edit2 className="mr-2 h-4 w-4" /> Edit
-                </Button> */}
                 <Button
                   onClick={() => {
                     deleteSession(session.id);
@@ -77,6 +73,7 @@ function PomodoroLog() {
               </CardFooter>
             </Card>
           ))}
+        <div className="py-10"></div> {/* Placeholder for the last element */}
       </div>
     </div>
   );

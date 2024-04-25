@@ -1,6 +1,8 @@
 "use client";
-import React, { createContext, useContext } from "react";
-import { PomodoroSession, useSessions } from "../hooks/useSessions";
+import { PomodoroSession, PomodoroSessionListType } from "@/types/session";
+import React, { createContext, useContext, useState } from "react";
+import { useToast } from "../ui/use-toast";
+import { deleteSessionFromDB, insertActionIntoDB } from "@/lib/db";
 
 interface SessionContextType {
   sessions: PomodoroSession[];
@@ -16,21 +18,53 @@ const SessionContext = createContext<SessionContextType>({
 
 export const SessionProvider = ({
   children,
+  sessions,
 }: {
   children: React.ReactElement;
+  sessions: PomodoroSessionListType;
 }) => {
-  const { sessions, setSessions } = useSessions();
+  const [currSessions, setSessions] = useState(sessions);
+  const { toast } = useToast();
 
   const addSession = (session: unknown) => {
-    setSessions([...sessions, session]);
+    insertActionIntoDB(session)
+      .then((res) => {
+        toast({
+          title: "Success!",
+          description: "Succesfully updated new session into our db",
+        });
+      })
+      .catch((err) => {
+        toast({
+          title: "Error",
+          description: "Unable to save action into DB",
+        });
+        console.log(err);
+      });
   };
 
   const deleteSession = (sessionId: number) => {
-    setSessions(sessions.filter((session) => session.id !== sessionId));
+    deleteSessionFromDB(sessionId)
+      .then((res) => {
+        toast({
+          title: "Success!",
+          description: "Succesfully delete session from db",
+        });
+        setSessions(currSessions.filter((item) => item.id != sessionId));
+      })
+      .catch((err) => {
+        toast({
+          title: "Error",
+          description: "Unable to delete session from DB",
+        });
+        console.log(err);
+      });
   };
 
   return (
-    <SessionContext.Provider value={{ sessions, addSession, deleteSession }}>
+    <SessionContext.Provider
+      value={{ sessions: currSessions, addSession, deleteSession }}
+    >
       {children}
     </SessionContext.Provider>
   );
