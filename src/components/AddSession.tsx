@@ -13,29 +13,40 @@ import {
 } from "./ui/dialog";
 import { useSessionContext } from "./context/SessionContext";
 import { Textarea } from "./ui/textarea";
+import { DatePicker } from "./DatePicker";
+import { format } from "date-fns";
 
 type AddSessionProps = {
   setOpen: (v: boolean) => void;
   open: boolean;
+  id?: number;
+  title?: string;
+  description?: string;
+  start: Date;
+  end: Date;
 };
 
-const AddSession = ({ open, setOpen }: AddSessionProps) => {
-  const [sessionName, setSessionName] = useState("");
-  const [sessionDescription, setSessionDescription] = useState("");
+const AddSession = ({
+  open,
+  setOpen,
+  id = -1,
+  title = "",
+  description = "",
+  start,
+  end,
+}: AddSessionProps) => {
+  const [sessionName, setSessionName] = useState(title);
+  const [sessionDescription, setSessionDescription] = useState(description);
   const { sessions, addSession } = useSessionContext();
 
   const handleClose = (e: React.FormEvent) => {
     e.preventDefault();
     const newSession = {
-      id:
-        sessions.length > 0
-          ? sessions
-              .map((item) => item.id)
-              .reduce((prev, curr) => Math.max(curr, prev), 0) + 1
-          : 1,
+      id,
       title: sessionName,
       description: sessionDescription,
-      completedAt: new Date().toISOString(),
+      start: start.toISOString(),
+      end: end.toISOString(),
     };
 
     addSession(newSession);
@@ -64,8 +75,8 @@ const AddSession = ({ open, setOpen }: AddSessionProps) => {
                 className="col-span-3"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="username" className="text-right mt-2">
                 Description
               </Label>
               <Textarea
@@ -74,6 +85,15 @@ const AddSession = ({ open, setOpen }: AddSessionProps) => {
                 onChange={(e) => setSessionDescription(e.target.value)}
                 className="col-span-3"
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Duration
+              </Label>
+              <Label className="text-left">
+                {start ? format(start, "hh:mm") : "Not set"} -{" "}
+                {end ? format(end, "hh:mm") : "Not set"}
+              </Label>
             </div>
           </div>
           <DialogFooter>

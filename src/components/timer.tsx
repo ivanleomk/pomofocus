@@ -14,6 +14,8 @@ const PomodoroTimer = () => {
     toggleActive,
     resetTimer,
     toggleInterval,
+    start,
+    end,
   } = useTimer();
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
@@ -41,7 +43,12 @@ const PomodoroTimer = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <AddSession setOpen={setAddSession} open={addSession} />
+      <AddSession
+        start={start}
+        end={end}
+        setOpen={setAddSession}
+        open={addSession}
+      />
       <h1 className="text-2xl font-semibold">{intervalType} Time</h1>
       <div className="text-4xl font-mono my-2">
         {`${minutes.toLocaleString("en-US", {

@@ -6,7 +6,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="flex justify-center items-center h-full w-4/5 max-w-6xl mx-auto">
       <ResizablePanelGroup direction="horizontal">
