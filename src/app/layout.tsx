@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "@/components/context/SessionContext";
 import { getRequestContext } from "@cloudflare/next-on-pages";
 import { PomodoroSession, PomodoroSessionList } from "@/types/session";
+import { ReactQueryClientProvider } from "@/components/src/ReactQueryClientProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -33,7 +34,10 @@ export default async function RootLayout({
           inter.variable
         )}
       >
-        <SessionProvider sessions={sessions}>{children}</SessionProvider>
+        <ReactQueryClientProvider>
+          <SessionProvider sessions={sessions}>{children}</SessionProvider>
+        </ReactQueryClientProvider>
+
         <Toaster />
       </body>
     </html>
