@@ -2,7 +2,7 @@
 import { Progress } from "./ui/progress";
 import { Button } from "./ui/button";
 import { useTimer } from "./hooks/useTimer";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useToast } from "./ui/use-toast";
 import AddSession from "./AddSession";
 
@@ -25,9 +25,15 @@ const PomodoroTimer = () => {
       : (1 - secondsLeft / (5 * 60)) * 100;
   const { toast } = useToast();
   const [addSession, setAddSession] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const playSound = () => {
+    audioRef?.current?.play();
+  };
 
   useEffect(() => {
     if (secondsLeft === 0 && !isActive) {
+      document.title = "Work Interval Ended!";
       setTimeout(() => {
         toast({
           title: `${intervalType} session completed`,
@@ -36,9 +42,20 @@ const PomodoroTimer = () => {
             minute: "2-digit",
           })}`,
         });
-        setAddSession(true);
+        playSound();
+        if (intervalType == "Work") {
+          setAddSession(true);
+        }
       }, 1000);
     }
+  }, [secondsLeft]);
+
+  useEffect(() => {
+    document.title = `${minutes.toLocaleString("en-US", {
+      minimumIntegerDigits: 2,
+    })}:${seconds.toLocaleString("en-US", {
+      minimumIntegerDigits: 2,
+    })} - ${intervalType}`;
   }, [secondsLeft]);
 
   return (
@@ -49,6 +66,7 @@ const PomodoroTimer = () => {
         setOpen={setAddSession}
         open={addSession}
       />
+      <audio ref={audioRef} src="/audio.wav" />
       <h1 className="text-2xl font-semibold">{intervalType} Time</h1>
       <div className="text-4xl font-mono my-2">
         {`${minutes.toLocaleString("en-US", {
