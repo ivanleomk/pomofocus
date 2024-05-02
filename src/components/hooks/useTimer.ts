@@ -28,7 +28,7 @@ export const useTimer = (initialState = WorkDuration) => {
   }, [isActive, secondsLeft, intervalType]);
 
   const toggleActive = () => {
-    if (!isActive && intervalType == "Work" && secondsLeft == WorkDuration) {
+    if (!isActive && secondsLeft == WorkDuration) {
       // We are toggling this to work
       setStart(new Date());
     }
